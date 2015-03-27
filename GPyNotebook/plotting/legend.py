@@ -7,9 +7,14 @@ from GPyNotebook.plotting.plot import Plot, LabelDictPlot
 
 class Legend(Plot):
     def __init__(self, plot, figsize=None, figtype=None, *args, **kwargs):
-        super(Legend, self).__init__(*args, **kwargs)
         assert isinstance(plot, LabelDictPlot)
+        if figsize is None:
+            figsize = (1, plot.figsize[1])
+        super(Legend, self).__init__(figsize, figtype, *args, **kwargs)
         self.plot = plot
+        self.ax.xaxis.set_visible(False)
+        self.ax.yaxis.set_visible(False)
+        self._redraw()
     
     def update_legend(self, name, old, new):
         self._redraw()

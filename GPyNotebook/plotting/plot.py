@@ -20,7 +20,7 @@ class Plot(HTML):
         """
         super(Plot, self).__init__(*args, **kwargs)
         fig, ax = plt.subplots(figsize=figsize)
-        self.figsize=figsize
+        self.figsize = fig.get_size_inches()
         self.ax = ax
         self.fig = ax.figure
         plt.close(fig)
@@ -45,7 +45,7 @@ class LabelDictPlot(Plot):
         self._update_to_name(lab_dict.keys()[0])
         
     def _update_to_name(self, new):
-        self.labels = self.lab_dict[new]
+        self.labels = self._lab_dict[new]
         self.ulabels = np.unique(self.labels)
     
     def labels_updated(self):

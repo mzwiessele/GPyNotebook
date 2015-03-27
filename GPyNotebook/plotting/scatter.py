@@ -3,7 +3,7 @@ Created on Mar 27, 2015
 
 @author: maxz
 '''
-import matplotlib.pyplot as plt, numpy as np, seaborn as sns
+import seaborn as sns
 import itertools
 from GPyNotebook.util import lim
 from GPyNotebook.plotting.plot import LabelDictPlot
@@ -11,6 +11,9 @@ from GPyNotebook.plotting.plot import LabelDictPlot
 
 class Scatter(LabelDictPlot):
     def __init__(self, X, lab_dict, colors=None, markers=None, figsize=(4,3), figtype=None, *args, **kwargs):
+        """
+        if colors is a string, we call sns.color_palette(colors, size(labels)) as the colors.
+        """
         super(Scatter, self).__init__(lab_dict, figsize, figtype, *args, **kwargs)
 
         self.X = X
@@ -28,7 +31,6 @@ class Scatter(LabelDictPlot):
         self.labels_updated()
         self.redraw()
         
-
     def redraw(self):
         #self.value='Loading...'
         x, y = self.X[:, self.xdim], self.X[:, self.ydim]
@@ -45,7 +47,13 @@ class Scatter(LabelDictPlot):
         for _ in range(len(self.ax.lines)):
             self.ax.lines[0].remove()
         self.scatters = []
-        m, c = itertools.cycle(self.markers), itertools.cycle(self.colors)
+        
+        if isinstance(self.colors, str):
+            c = iter(sns.color_palette(self.colors, self.ulabels.size))
+        else:
+            c = itertools.cycle(self.colors)
+        
+        m = itertools.cycle(self.markers)
         for l in self.ulabels:
             self.scatters.extend(self.ax.plot([], [], marker=m.next(), markeredgecolor='none', ls='', markerfacecolor=c.next(), alpha=.7, label=l))
         self.redraw()
@@ -58,4 +66,4 @@ class Scatter(LabelDictPlot):
     def change_y_dim(self, name, old, new):
         self.ydim = new
         self.ax.set_ylabel('Dimension {}'.format(self.ydim))
-        self.redraw()    
+        self.redraw()
