@@ -10,13 +10,13 @@ from GPyNotebook.controls.select import DimSelect
 from IPython.html.widgets.widget_selection import Dropdown
 
 class LatentView(Box):
-    def __init__(self, X, lab_dict, colors=None, markers=None, figsize=None, figtype=None, *a, **kw):
+    def __init__(self, X, lab_dict, dim_names=None, colors=None, markers=None, figsize=None, figtype=None, *a, **kw):
         self.scatter = Scatter(X, lab_dict, colors, markers, figsize, figtype)
         self.legend = Legend(self.scatter)
         self.input_dim = X.shape[1]
         self.lab_dict = lab_dict
         
-        dx, dy, dl = cntrls = self._controls()
+        dx, dy, dl = cntrls = self._controls(dim_names)
         
         kw['children'] = [
                           HBox(children=cntrls), 
@@ -33,9 +33,13 @@ class LatentView(Box):
 
         super(LatentView, self).__init__(*a, **kw)
         
-    def _controls(self):
-        return (DimSelect(self.input_dim, value=0, description='x'),
-                DimSelect(self.input_dim, value=1, description='y'),
+    def _controls(self, names=None):
+        if names is not None:
+            v1, v2 = names[:2]
+        else:
+            v1, v2 = 0, 1
+        return (DimSelect(self.input_dim, names, value=v1, description='x'),
+                DimSelect(self.input_dim, names, value=v2, description='y'),
                 Dropdown(options=self.lab_dict.keys(), description='labels')
                 )
         
